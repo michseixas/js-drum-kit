@@ -67,30 +67,26 @@
         const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
 
         if (!audio) return; // if no audio, stop function from working
+
+        key.classList.add("playing");
         audio.currentTime = 0; //rewind it to the start of the element(cause if an audio is clicked and playing and you click again, it would not play until it finishes.This solves it. )
         audio.play();
-        key.classList.add("playing");
       }
 
       function removeTransition(e) {
-        if (e.propertyName !== "transform") return; //we have to pick the exact transition we want to remove. Here, its the propertyName "transform"
-
-        console.log(this); //just checking to know what "this" is. Here, it's whatever got called against it... against the removeTransition(), so it's "key".
-        this.classList.remove("playing"); //the class .playing is activaded by the key being pressed. Once the "playing" is finished, it has to be removed, so the key is back to the starting point.
-      }
-
-      function removeTransition(e) {
-        console.log(e);
+        if (e.propertyName !== 'transform') return; //we have to pick the exact transition we want to remove. Here, its the propertyName "transform"
+        console.log("this is the property name", e.propertyName); //checking if I picked the right property name :))
+        e.target.classList.remove("playing"); //the class .playing is activaded by the key being pressed. Once the "playing" is finished, it has to be removed, so the key is back to the starting point.
       }
 
       const keys = document.querySelectorAll(".key");
       //transition end event:
       keys.forEach((key) =>
         key.addEventListener("transitionend", removeTransition)
-      ); //each key gets an eventListener added to it ('transitionend'). When a transition is ending, you remove it.
+      ); //each key gets an eventListener added to it (eventListener: 'transitionend'). When a transition is ending, you remove it (removeTransition).
       //The transitionend event in JavaScript is an event that fires when a CSS transition has completed.
-      //This event is useful when you want to perform actions in response to the completion of a CSS transition, such as adding or removing classes,
-      // triggering other animations, or executing some JavaScript logic after the transition ends.
+      //Used when you want to perform actions in response to the completion of a CSS transition, such as adding or removing classes,
+      //triggering other animations, or executing some JavaScript logic after the transition ends.
 
       window.addEventListener("keydown", playSound);
     </script>
