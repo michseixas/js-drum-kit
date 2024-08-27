@@ -1,79 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JavaScript Drum Kit</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<div class="keys">
-    <div data-key="65" class="key">
+  <body>
+    <div class="keys">
+      <div data-key="65" class="key">
         <kbd>A</kbd>
         <span class="sound">clap</span>
-    </div>
-    <div data-key="83" class="key">
+      </div>
+      <div data-key="83" class="key">
         <kbd>S</kbd>
         <span class="sound">hihat</span>
-    </div>
-    <div data-key="68" class="key">
+      </div>
+      <div data-key="68" class="key">
         <kbd>D</kbd>
         <span class="sound">kick</span>
-    </div>
-    <div data-key="70" class="key">
+      </div>
+      <div data-key="70" class="key">
         <kbd>F</kbd>
         <span class="sound">openhat</span>
-    </div>
-    <div data-key="71" class="key">
+      </div>
+      <div data-key="71" class="key">
         <kbd>G</kbd>
         <span class="sound">boom</span>
-    </div>
-    <div data-key="72" class="key">
+      </div>
+      <div data-key="72" class="key">
         <kbd>H</kbd>
         <span class="sound">ride</span>
-    </div>
-    <div data-key="74" class="key">
+      </div>
+      <div data-key="74" class="key">
         <kbd>J</kbd>
         <span class="sound">snare</span>
-    </div>
-    <div data-key="75" class="key">
+      </div>
+      <div data-key="75" class="key">
         <kbd>K</kbd>
         <span class="sound">tom</span>
-    </div>
-    <div data-key="76" class="key">
+      </div>
+      <div data-key="76" class="key">
         <kbd>L</kbd>
         <span class="sound">tink</span>
+      </div>
     </div>
-</div>
 
+    //data-key is a data attribute. we're are using it here to hook up each
+    data-key numer with it's correspondant audio
 
-//data-key is a data attribute. 
-we're are using it here to hook up each data-key numer with it's correspondant audio
-    
+    <audio data-key="65" src="sounds/clap.wav"></audio>
+    <audio data-key="83" src="sounds/hihat.wav"></audio>
+    <audio data-key="68" src="sounds/kick.wav"></audio>
+    <audio data-key="70" src="sounds/openhat.wav"></audio>
+    <audio data-key="71" src="sounds/boom.wav"></audio>
+    <audio data-key="72" src="sounds/ride.wav"></audio>
+    <audio data-key="74" src="sounds/snare.wav"></audio>
+    <audio data-key="75" src="sounds/tom.wav"></audio>
+    <audio data-key="76" src="sounds/tink.wav"></audio>
 
-<audio data-key="65" src="sounds/clap.wav"></audio>
-<audio data-key="83" src="sounds/hihat.wav"></audio>
-<audio data-key="68" src="sounds/kick.wav"></audio>
-<audio data-key="70" src="sounds/openhat.wav"></audio>
-<audio data-key="71" src="sounds/boom.wav"></audio>
-<audio data-key="72" src="sounds/ride.wav"></audio>
-<audio data-key="74" src="sounds/snare.wav"></audio>
-<audio data-key="75" src="sounds/tom.wav"></audio>
-<audio data-key="76" src="sounds/tink.wav"></audio>
+    <script>
+      function playSound(e) {
+        //The e (event) parameter contains information about the event, including which key was pressed.
+        const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+        const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
 
-<script>
-window.addEventListener("keydown", function(e){ //The e parameter (short for “event”) contains information about the event, including which key was pressed.
-    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`)
-    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`)
+        if (!audio) return; // if no audio, stop function from working
+        audio.currentTime = 0; //rewind it to the start of the element(cause if an audio is clicked and playing and you click again, it would not play until it finishes.This solves it. )
+        audio.play();
+        key.classList.add("playing");
+      }
 
-    if (!audio) return; // if no audio, stop function from working
-audio.currentTime = 0;  //rewind it to the start of the element(cause if an audio is clicked and playing and you click again, it would not play until it finishes.This solves it. )
-audio.play();
-console.log(key);
-});
+      function removeTransition(e) {
+        if (e.propertyName !== "transform") return; //we have to pick the exact transition we want to remove. Here, its the propertyName "transform"
 
-</script>
+        console.log(this); //just checking to know what "this" is. Here, it's whatever got called against it... against the removeTransition(), so it's "key".
+        this.classList.remove("playing"); //the class .playing is activaded by the key being pressed. Once the "playing" is finished, it has to be removed, so the key is back to the starting point.
+      }
 
-</body>
+      function removeTransition(e) {
+        console.log(e);
+      }
+
+      const keys = document.querySelectorAll(".key");
+      //transition end event:
+      keys.forEach((key) =>
+        key.addEventListener("transitionend", removeTransition)
+      ); //each key gets an eventListener added to it ('transitionend'). When a transition is ending, you remove it.
+      //The transitionend event in JavaScript is an event that fires when a CSS transition has completed.
+      //This event is useful when you want to perform actions in response to the completion of a CSS transition, such as adding or removing classes,
+      // triggering other animations, or executing some JavaScript logic after the transition ends.
+
+      window.addEventListener("keydown", playSound);
+    </script>
+  </body>
 </html>
